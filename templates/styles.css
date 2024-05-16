@@ -1,0 +1,60 @@
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Slab:ital,wght@0,600;1,600&display=swap');
+
+/* Body styling */
+body {
+    background-color: #f8f9fa; /* Light background color for the entire page */
+    font-size: 2rem;
+    font-family: "Josefin Slab", serif!important;
+}
+
+p,h1,h2,h3 {
+    font-family: "Josefin Slab", serif!important;
+}
+/* Card styling */
+.card {
+    margin-top: 50px; /* Top margin to create space above the card */
+    box-shadow: 0 4px 8px rgba(0,0,0,20); /* Subtle shadow for the card */
+}
+
+
+/* Card header styling */
+.card-header {
+    background-color: #007bff; /* Blue background color for the card header */
+    color: white; /* White text color for the card header */
+}
+
+select {
+    padding: 10px;
+}
+
+label {
+    padding: 10px; 
+}
+
+.card-select select {
+    background-color: #444;
+    color: #fff;
+    border: none;
+}
+
+/* Card body styling */
+.card-body {
+    padding: 30px; /* Padding inside the card body */
+}
+
+/* Primary button styling */
+.btn-primary {
+    background-color: #007bff; /* Blue background color for primary buttons */
+    border-color: #007bff; /* Matching border color for primary buttons */
+}
+
+/* Calculate button styling */
+.calculate-btn {
+    font-size: 1.5rem !important; /* Larger font size for the calculate button with !important */
+}
+
+/* Alert styling */
+.alert {
+    margin-top: 20px; /* Top margin to create space above alerts */
+}
+

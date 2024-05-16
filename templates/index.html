@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Poker Odds Calculator</title>
+    <!-- Include Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Include custom CSS -->
+    <link href="{{ url_for('static', filename='styles.css') }}" rel="stylesheet">
+    <link rel="icon" href="cards/king_of_clubs.png" type="image/png">
+    <!-- Meta tag for responsiveness -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <style>
+        .card-select {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .card-select img {
+            margin-right: 10px;
+            height: 50px;
+            width: auto;
+        }
+        .form-control {
+            font-size: 1.5rem;
+            margin-right: 10px;
+            font-family: 'Josefin Slab', serif; /* Apply Josefin Slab font */
+        }
+        .form-group label {
+            font-size: 1.5rem;
+        }
+        .card-body {
+            font-size: 1.25rem;
+        }
+        .btn-block {
+            font-size: 1.5rem;
+        }
+        /* Define red color for hearts and queens */
+        .red-card {
+            color: red!important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="/">Poker Odds Calculator</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="https://github.com/y0n1n1" target="_blank">Creator's GitHub</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card mt-5">
+                    <div class="card-header">
+                        <h1 class="text-center">Poker Odds Calculator</h1>
+                    </div>
+                    <div class="card-body">
+                        <!-- Placeholder for alert messages -->
+                        <div id="alert-placeholder"></div>
+                        <form method="POST" onsubmit="return validateForm()">
+                            <div class="form-group">
+                                <label for="num_hands">Number of Hands</label>
+                                <input type="number" class="form-control" id="num_hands" name="num_hands" min="2" onchange="updateHandDropdowns()">
+                            </div>
+                            <div class="form-group" id="hands">
+                                <p>Hands<p>
+                                
+                                <!-- Hand dropdowns will be added here by JavaScript -->
+                            </div>
+                            <div class="form-group">
+                                <label for="num_community_cards">Number of Community Cards</label>
+                                <select class="form-control" id="num_community_cards" name="num_community_cards" onchange="updateCommunityCardDropdowns()">
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                </select>
+                            </div>
+                            <div class="form-group" id="community_cards">
+                                <label>Community Cards</label>
+                                <!-- Community card dropdowns will be added here by JavaScript -->
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block calculate-btn">Calculate Odds</button>
+                        </form>
+                        {% if result %}
+                            <div class="alert alert-success mt-3" role="alert">
+                                <h2 class="text-center">{{ result }}</h2>
+                            </div>
+                        {% endif %}
+                        {% if error_message %}
+                            <div class="alert alert-danger mt-3" role="alert">
+                                <h2 class="text-center">Error: {{ error_message }}</h2>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <br>
+    </div>
+
+    <!-- Include Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        function updateHandDropdowns() {
+            var numHands = document.getElementById('num_hands').value;
+            var handsDiv = document.getElementById('hands');
+            handsDiv.innerHTML = '';
+            
+            for (var i = 1; i <= numHands; i++) {
+                var div = document.createElement('div');
+                div.className = 'card-select';
+                
+                var label = document.createElement('label');
+                label.textContent = `Hand ${i}`;
+                label.style.padding = "20px";
+                
+                var select1 = document.createElement('select');
+                select1.className = 'form-control';
+                select1.name = `hand${i}_card1`;
+                select1.style.fontSize = '30px';
+                select1.style.color = "#444";
+                
+                var select2 = document.createElement('select');
+                select2.className = 'form-control';
+                select2.name = `hand${i}_card2`;
+                select2.style.fontSize = '30px';
+                select2.style.color = "#444";
+                
+                {% for card in cards %}
+                    var option1 = document.createElement('option');
+                    option1.value = '{{ card }}';
+                    option1.textContent = '{{ card }}';
+                    if (option1.value.includes('H') || option1.value.includes('Q')) {
+                        option1.classList.add('red-card'); // Add red color class
+                        option1.style.color="red";
+                    }
+                    select1.appendChild(option1);
+                    
+                    var option2 = document.createElement('option');
+                    option2.value = '{{ card }}';
+                    option2.textContent = '{{ card }}';
+                    if (option2.value.includes('H') || option2.value.includes('Q')) {
+                        option2.classList.add('red-card'); // Add red color class
+                        option2.style.color="red";
+                    }
+                    select2.appendChild(option2);
+                {% endfor %}
+                
+                div.appendChild(label);
+                div.appendChild(select1);
+                div.appendChild(select2);
+                handsDiv.appendChild(div);
+            }
+        }
+
+        function updateCommunityCardDropdowns() {
+            var num = document.getElementById('num_community_cards').value;
+            var communityCardsDiv = document.getElementById('community_cards');
+            communityCardsDiv.innerHTML = '';
+            
+            for (var i = 1; i <= num; i++) {
+                var div = document                .createElement('div');
+                div.className = 'card-select';
+                
+                var select = document.createElement('select');
+                select.className = 'form-control';
+                select.name = `community_card${i}`;
+                
+                {% for card in cards %}
+                    var option = document.createElement('option');
+                    option.value = '{{ card }}';
+                    option.textContent = '{{ card }}';
+                    if (option.value.includes('H') || option.value.includes('Q')) {
+                        option.classList.add('red-card'); // Add red color class
+                        option.style.color="red";
+                    }
+                    select.appendChild(option);
+                {% endfor %}
+                
+                div.appendChild(select);
+                communityCardsDiv.appendChild(div);
+            }
+        }
+        
+        // Initialize with the default number of hands and community cards
+        document.getElementById('num_hands').value = 2;
+        updateHandDropdowns();
+        updateCommunityCardDropdowns();
+
+        function validateUniqueCards() {
+            var allCards = []; // Array to store all selected cards
+            var isValid = true; // Flag to track validation result
+
+            // Collect all selected cards from hands
+            var numHands = document.getElementById('num_hands').value;
+            for (var i = 1; i <= numHands; i++) {
+                var card1 = document.querySelector(`select[name='hand${i}_card1']`).value;
+                var card2 = document.querySelector(`select[name='hand${i}_card2']`).value;
+                allCards.push(card1, card2);
+            }
+
+            // Collect all selected cards from community cards
+            var numCommunityCards = document.getElementById('num_community_cards').value;
+            for (var j = 1; j <= numCommunityCards; j++) {
+                var communityCard = document.querySelector(`select[name='community_card${j}']`).value;
+                allCards.push(communityCard);
+            }
+
+            // Check if any card is repeated
+            var uniqueCards = new Set(allCards);
+            if (uniqueCards.size !== allCards.length) {
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        // Function to be called before form submission
+        function validateForm() {
+            var alertPlaceholder = document.getElementById('alert-placeholder');
+            alertPlaceholder.innerHTML = ''; // Clear any previous alerts
+
+            if (!validateUniqueCards()) {
+                var alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-danger';
+                alertDiv.role = 'alert';
+                alertDiv.innerHTML = 'Error: Each card must be unique.';
+                alertPlaceholder.appendChild(alertDiv);
+                return false; // Prevent form submission
+            }
+            return true; // Allow form submission if all validations pass
+        }
+    </script>
+        <!-- Footer section -->
+        <footer class="footer mt-5 py-3">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h3>About the Project</h3>
+                        <p>This project is a Poker Odds Calculator. It allows users to input the number of hands, community cards, and their respective cards. Then, it calculates the odds of each hand winning based on the current state of the game.</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h3>Contact the Creator</h3>
+                        <p>Hello, I am Gabriel, an aspiring programmer among other things. If you want to talk to me, please reach out on my <a href="https://www.linkedin.com/in/gabriel-tonini-lopes-gramicelli-99939123a/">LinkedIn</a>, and if you want to see more projects like this, go to my <a href="https://github.com/y0n1n1">GitHub</a>.</p>
+                    </div>
+                </div>
+                <br>
+                <div><p>Gabriel Gramicelli © 2024</p></div>
+            </div>
+        </footer>
+    </body>
+    </html>
+</body>
+</html>
+
