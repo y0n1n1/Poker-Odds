@@ -393,5 +393,6 @@ def stats(player:list, board:list):
         statistics[best]+=1
     
     for type, amount in statistics.items():
-        print(f"{type}: {amount} possibilities, {(amount/tot)*100}% chance")
+        if amount!=0:
+            print(f"{type}: {amount} possibilities, {(amount/tot)*100}% chance")
  
