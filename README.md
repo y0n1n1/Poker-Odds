@@ -1,2 +1,6 @@
-# Poker-Odds
-This project is a Poker Odds Calculator. It allows users to input the number of hands, community cards, and their respective cards. Then, it calculates the odds of each hand winning based on the current state of the game.
+# Spy-Eye
+
+Spy-Eye is a fine-tuned version of YOLO-NAS for card detection from a standard 52 card poker deck. It also includes a Poker-Odds calculator, that can be consulted separately or used with Spy-Eye to identify your chances of getting certain poker combinations.
+
+
+
