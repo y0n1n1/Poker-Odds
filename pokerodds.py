@@ -356,55 +356,42 @@ def odds(player_hands:list, board:list, show_ties=False):
         #print(wins_vector)
     return vector_to_percentages(wins_vector)
             
-"""
-print(odds([["JS","5D"],["2D","AD"]],["8H", "QC", "KH", "2S"]))
-print(odds([["JS","5D"],["2D","AD"]],["8H", "QC", "KH"]))
+def stats(player:list, board:list):
+    turn = len(board)
+    rem = 5-turn # 2>flop, 1> turn
 
-#print(best_hand(["9H", "KH", "QH", "JH", "10H", "2S","KD"]))
-print("TYPE        SUIT    TOP    2TOP                FULL")
-print(best_hand(["AS", "KS", "QS", "JS", "10S", "10S","KD"]))
-print(best_hand(["JD", "10D", "9D", "8D", "7D", "6D","KD"]))
-print(best_hand(["9H", "9S", "10C", "10D", "10H", "10S","KD"]))
-print(best_hand(["9H", "9S", "9C", "10D", "10H", "10S","7D"]))
-print(best_hand(["4S", "JS", "8S", "2S", "9S", "AS","7D"]))
-print(best_hand(["9S", "8D", "7Q", "6S", "5H", "AS","4D"]))
-print(best_hand(["7S", "7D", "7Q", "6S", "2H", "AS","4D"]))
-print(best_hand(["4S", "4D", "8Q", "8S", "AH", "AS","3D"]))
-print(best_hand(["AS", "AD", "8Q", "4S", "2H", "7S","3D"]))
-print(best_hand(["3D", "JC", "8S", "4H", "2S", "7S","5D"]))
+    shown_cards = []
+    for card in board:shown_cards.append(card)
+    for card in player:shown_cards.append(card)
+    #shown_cards contains all cards taken from deck
+    remaining_cards = [item for item in all_cards if item not in shown_cards]
+    all_odds = []
+    if rem==1:
+        for i in remaining_cards:all_odds.append([i])
+    if rem==2:
+        for card in remaining_cards:
+            rem_after = [i for i in remaining_cards if i!=card]
+            for sec_card in rem_after:all_odds.append([card, sec_card])
+    tot = len(all_odds)
+    statistics = {'royal flush': 0, 
+              'straight flush': 0, 
+              'quads': 0, 
+              'full house': 0, 
+              'flush': 0, 
+              'straight': 0, 
+              'trios': 0, 
+              'two pair': 0, 
+              'pair': 0, 
+              'high card': 0}
 
-print(compare(['royal flush', 'S', 'A', None, ['AS', 'KS', 'QS', 'JS', '10S']], 
-              ["10S", "10S"], 
-              ['flush', 'S', 'A', None, ['JS', '8S', '2S', '9S', 'AS']], 
-              ["4S", "JS"]))
-print(compare(['pair', None, 'A', None, ['AS', 'AD', '2H', '7S', '3D']], 
-              ['AS', 'AD'], 
-              ['two pair', None, 'A', '8', ['8Q', '8S', 'AH', 'AS', '3D']], 
-              ['AH', 'AS']))
-print(compare(['straight flush', 'S', 'Q', None, ['9S', '8S', 'QS', 'JS', '10S']], 
-              ['AS', 'AD'], 
-              ['straight flush', 'S', 'K', None, ['9S', 'KS', 'QS', 'JS', '10S']], 
-              ['AH', 'AS']))
-print(compare(['two pair', None, 'A', '8', ['8Q', '8S', 'AH', 'AS', '3D']], 
-              ['AH', '3D'], 
-              ['two pair', None, 'A', '8', ['8Q', '8S', 'AH', 'AS', '3D']], 
-              ['AH', '3D']))
-print(compare(['two pair', None, 'A', '8', ['8Q', '8S', 'AH', 'AS', '3D']], 
-              ['AH', '8S'], 
-              ['two pair', None, 'A', '8', ['8Q', '8S', 'AH', 'AS', '3D']], 
-              ['AH', '3D']))
-print(compare(['two pair', None, 'A', '8', ['8Q', '8S', 'AH', 'AS', '3D']], 
-              ['AH', '3D'], 
-              ['two pair', None, 'A', '8', ['8Q', '8S', 'AH', 'AS', '3D']], 
-              ['AH', '8S']))
-"""
-#print(odds([['9H', '3S'], ['8D', '7C'], ['QS', 'KH'], ['4C', '6H'], ['AD', '2S']], ['5S','9D', 'AH', '4S']))
-#print(odds([['9H', '3S'], ['8D', '7C']], []))
-# 1712303/1712304, 99.99994159915529% Complete
-#[55.02638550163989, 44.97361449836011]
-#print(odds([['6C', '5S'], ['AH', 'AC']], ['6S','JS','5C']))
-#print(odds([['6C', '5S'], ['AH', 'AC']], ['6S','JS','5C','AS']))
 
-#print(odds([['JD', '7D'], ['AH', 'AD']], ['8C','KD','5D']))
-
-#print(odds([['KD','3S'],['2H','3C']],['AH','7C','6D']))
+    for n,odd in enumerate(all_odds):
+        #print(f"{n}/{tot}, {(n/tot)*100}% Complete")
+        this_full = odd + board+player
+        #print(this_board)
+        best = best_hand(this_full)[0]
+        statistics[best]+=1
+    
+    for type, amount in statistics.items():
+        print(f"{type}: {amount} possibilities, {(amount/tot)*100}% chance")
+ 
