@@ -8,3 +8,7 @@ Spy-Eye is a fine-tuned version of YOLO-NAS for card detection from a standard 5
 
 https://github.com/user-attachments/assets/b1fe75ce-2703-4311-9b3c-4520d3aaecdd
 
+
+
+https://github.com/user-attachments/assets/19d6d763-d353-41f3-a87b-00ba930a4f24
+
